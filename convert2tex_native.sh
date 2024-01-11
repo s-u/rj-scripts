@@ -1,4 +1,5 @@
 #!/bin/bash
+# (C) Simon Urbanek, License: MIT
 
 set -e
 

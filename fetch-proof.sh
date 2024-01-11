@@ -1,6 +1,12 @@
 #!/bin/bash
+# (C) Simon Urbanek, License: MIT
 
 : ${PROOFSRC=~/Projects/RJ-proofs}
+
+if [ ! -d $PROOFSRC ]; then
+    echo "ERROR: cannot find incoming proofs directory, set PROOFSRC if needed"
+    exit 1
+fi
 
 set -e
 

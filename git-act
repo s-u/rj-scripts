@@ -1,0 +1,32 @@
+#!/bin/bash
+# this script figures out changes in the current directory
+# and presents corresponding git commands to add those changes
+# untracked and index changes are separated
+# (although designed for articles, it works on any git directory)
+# it excludes changes in .old which is used in proofs to
+# move aside old content
+#
+# (C) Simon Urbanek, License: MIT
+
+if [ ! -e "DESCRIPTION" ]; then
+    echo "(Note: This is indended to be run in the directory with DESCRIPTION)"
+fi
+
+WHERE=.
+
+TOP=`git rev-parse --show-toplevel`
+CWD=`pwd`
+SUB=`echo $CWD | sed "s:^$TOP/::"`
+ID=`echo $SUB | sed 's:.*/::'`
+
+echo "## changes in $SUB"
+git status --porcelain "$WHERE" | sed -n -e 's:^ M :git add :p' -e 's:^ D :git rm :p' | sed "s:$SUB/::"
+echo "## untracked"
+git status --porcelain "$WHERE" | sed -n -e 's:^\?\? :git add :p' | sed "s:$SUB/::" | grep -v ' \.old/'
+echo ''
+if echo $SUB | grep Proofs/ >/dev/null; then
+    echo "git commit -m \"$ID proofed\""
+else
+    echo "## git commit -m \"$ID revision\""
+fi
+echo ''
